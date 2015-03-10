@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>PHPass Tutorial</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="magula.css">
+        <link rel="stylesheet" type="text/css" href="newcss.css">
+        <script src="highlight.pack.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+        <h1>An Introduction to Using PHPass</h1>
+        <p>Welcome to my tutorial. I made this tutorial as a student for a web development course. how to make a really strong password login system to protect against hackers.
+            In the process, I learned a lot about hashing and web security in general. 
+            I was also surprised to see how few web developer tutorials are up to date on security issues. There were a lot 
+            of tutorials for log-in systems that mentioned using md5's and sha1! </p>
+        <p>As a result, I am writing a tutorial on PHPass, (pronounced "ph-pass"). If you are using php 5.5 or newer, this may not be the most up 
+            to date method. However, as not everyone has 5.5 installed just yet, PHPass is still a great way to secure passwords.
+            Hashing is the very first thing every aspiring web developer should know to not only protect your 
+            client, but also yourself from harm. </p>
+        <p>Now, as I was doing research on PHPass, I also discovered there was a dearth of good tutorials on creating 
+            a basic login and user accounts for a webpage connected to a database. So in this tutorial I will show you not 
+            just how to use PHPass, but also how to use it in the context of creating a basic login and create user account 
+            pages for a website. In a later tutorial, I would like to show how to login using the accounts that have already
+            been created.</p>
+        <p>First a little bit about password security to begin with. Let's start with this cartoon from <a href="http://xkcd.com/936/">xkcd</a>:</p>
+        <A HREF="http://xkcd.com/936/"><IMG SRC="http://imgs.xkcd.com/comics/password_strength.png" alt="xkcd comic"></a>
+        <p> Just recently, the popular web data encryption system OpenSSL has found a flaw called the 
+            Heartbleed bug. In order to protect themselves, millions of users all over the world are 
+            having to change their passwords to avoid being hacked. </p>
+   <h2>What are some common ways to 
+        strengthen your password?</h2>
+        <ul>
+             
+            <li>Length of password. You don't want to make a password that is too short. I would 
+                recommend at least 10 character passwords. As you will see in this tutorial, a password
+                that is too long is also putting a server at risk of Denial-of-Service attacks. For this 
+                reason, I put in code to keep a user from entering a password that is greater than 72
+                characters. Besides, who can remember 72 characters anyway?</li>
+            <li>Make it unique. Remember there are databases of passwords that have already been hacked.
+                They are called "rainbow tables." So don't use something just anyone can come up with 
+                like "123letsgo" or "password" or "abcletters." Just saying...And while I'm at it, 
+                don't use common names, cities, birthdays, or other important dates. 
+               </li>
+            <li>Try creating a sentence for a password. This makes it both easy to remember and unique.</li>
+            <li>I'm not completely convinced on the logic of using uppercase, lowercase, digits and 
+                special characters all together. As the comic shows above, you probably won't remember it
+                easily, and it could still be vulnerable to attacks. Better to just make it a unique 
+                string that you can remember and the hackers can't guess.</li>
+        </ul>
+        <p>
+            For a really good video on password security with the php language, go
+            <a href="http://youtu.be/eNdW5HWBhG0">here</a>.
+        </p>
+        <p> In order to beat your enemy, you need to know their strategies. Here is a list of basic ways 
+            that hackers can gain access to your password. Fortunately, PHPass combats many of these 
+            strategies.</p>
+         <h2>Common password attacks</h2>
+        <ul>
+           
+            <li>Dictionary attack. If it is a real word that can be found in a dictionary, it can 
+                probably be hacked.If you are going to use words, use multiple unrelated words.</li>
+            <li>Brute force attack. Dictionary attack plus possible alphanumeric combinations. 
+                This is a very common form of attack. Hashing with a strong framework such as PHPass
+                protects against brute force.</li>
+            <li>Rainbow table attack. Rainbow tables are a list of hashes that  have already been cracked.
+            It takes time to sort through the rainbow table to find these hashes, so you want to reduce 
+            the time available for look-up. These attacks are not as common these days, but PHPass still protects against them.</li>
+            <li>Malware. I have been a victim of this myself. Often, I am looking up something I need to 
+                download. Instead of going to the official site, an official-looking site claims to have 
+                the document I need. Then I download it, not realizing I am also downloading malware into 
+                my computer, which introduces all sorts of problems from flashing advertisements to 
+                screenshots of the login process or recording everything you type. </li>
+            <li>Phishing. This is where an e-mail that looks legit is sent to you asking you for 
+                identifying information such as name and password. This will then be used to seriously 
+                mess up your life. Don't fall for it, because legitimate companies such as banks or other
+                companies that require login will never ask you to send your password via email.</li>
+             </ul>
+            <p>There are many other ways that people can try to gain access to your password. The best
+                thing you can do is to start off with a strong password, using the tips I just mentioned.
+                Also, as a web developer, I can't emphasize enough how important it is to keep up to date
+                on current hashing techniques and employ them with every database you use. To not do so 
+                could put you, your company or your clients at risk.</p>
+       
+        <p>Now that I have discussed password security at length, here is a little bit about PHPass and how it
+            works. PHPass is a portable hashing framework for use in php password entry applications.
+            Although it can work with PHP 3 and above, it is recommended to have at least PHP 5.3.0 and 
+            above. If you have PHP 5.5 or later versions, you may find other, 
+            stronger password security libraries. To use it, you have to download the source file <a href="http://www.openwall.com/phpass/">here</a>and link 
+            to it whenever you have a user enter a password into a database.</p>
+        <p>PHPass works by using a three-pronged approach to making password entry tough to crack.  
+            PHPass uses a strong combination of salting, key stretching, and Bcrypt. Salts are either
+            added to the beginning or end of your hash, making them harder to crack, because they are 
+            truly random.Salting prevents rainbow table attacks. 
+        Key stretching is the processing of doing multiple iterations before producing output. Time is 
+        of the essence for hackers and this slows them down considerably.
+        Bcrypt is meant as a way to prevent brute force hacking, which I previously discussed as being 
+        one of the more common methods of attack. It uses key stretching by setting the amount of 
+        iterations to be done per hash.
+        </p>
+        <h1>What you need to begin with:</h1>
+        <ul>
+            <li>Access to a mySQL database with phpMyAdmin.</li>
+            <li>Basic understanding of JavaScript, HTML, CSS, and PHP.</li>
+            <li>PHP 5.3 +</li>
+        </ul>
+        <p> You will also need to set up the following files:</p>
+        <ul>
+            <li>PasswordHash.php (see below)</li>
+            <li>index.php</li>
+            <li>create_user.php</li>
+            <li>create_user_style.css</li>
+            
+   
+        </ul>
+        <p> Go <a href="http://www.openwall.com/phpass/">here</a> to download PHPass.
+            When you download it, you will create a separate file for the PHPass code called "PasswordHash.php"</p>
+        <h1>Setting up the database table.</h1>
+        <p>Here is the basic database table I set up in phpMyadmin. Id is your primary field, and it is 
+            auto-incremented. For a standard website that someone wants to join as a user, you will want
+            a username, password, and e-mail. Other tutorials will have you include salt as a field in the database, 
+            however PHPass already takes care of that for you. For those who are wondering, salt is an extra protection 
+            against brute force hackers.</p><br>
+        <p>If you are unfamiliar with setting up tables on a database using phpMyadmin, check out the 
+            following video tutorials on New Boston:</p>
+        <ul>
+            <li><a href="http://youtu.be/msCY6evKpNI">phpMyAdmin Part 1</a></li>
+            <li><a href="http://youtu.be/Yo5y49DHslw">phpMyAdmin Part 2</a></li>
+            <li><a href="http://youtu.be/cRftgt5Wl2I">phpMyAdmin Part 3</a></li>
+        </ul>
+
+        <img src="images/database_shot.png" alt="database">
+        <h1>Creating the user account creation page.</h1>
+        <p>
+            This is where we provide the user with a form for creating new accounts.
+            Most websites include a captcha or email verification, or both. This could 
+            be a topic for a future tutorial. 
+        </p>
+        <p>The first step here is to create a php file that contains a valid html document inside of it. 
+            I called mine "index.php". It does not have to be a php file,  you could make an html file 
+            instead if you are not going to run your php code here.</p>
+        <pre>
+            <code class="html">
+    &lt;!DOCTYPE html>
+    &lt;html>
+        &lt;head>
+            &lt;meta charset="UTF-8">
+            &lt;title>Create account&lt;/title>
+        &lt;/head>
+        &lt;body>
+        &lt;/body>
+    &lt;/html>
+            </code>
+        </pre>
+        <p>Now inside the body tag, create your login form. There are three fields: one for the 
+            password, one for username, and one for e-mail. The submit button is what the user
+            will press to submit all 3 fields. The action property of the form tag specifies the php file
+            which I will call when the user submits the form. We will make that file later in 
+            the tutorial. </p>
+        <pre>
+            <code class="html">
+        &lt;p>Join us!&lt;/p>
+    &lt;form action="create_user.php" method = "POST" name="create_user_account" onsubmit="return validateForm()">
+        Username: &lt;input type="text" name="username">
+        Password: &lt;input type="password" name="password">
+        Email: &lt;input type="text" name="email">
+        &lt;button type="submit">Join now&lt;/button>
+    &lt;/form>
+            </code>
+        </pre>
+        <p>The onsubmit function is how we validate the form in javaScript. In the head tag, you want 
+            to add a script tag and add the following code:</p>
+        <pre>
+            <code class="javascript">
+    function validateForm()
+    {
+        var form = document.forms["create_user_account"];
+        if (form["username"].value == null || form["username"].value == "")
+        {
+            alert("Please choose a username");
+            return false;
+        }
+        if (form["password"].value.length < 10)
+        {
+            alert("Your password must be at least 10 characters long");
+            return false;
+        }
+        var atpos = form["email"].value.indexOf("@");
+        var dotpos = form["email"].value.lastIndexOf(".");
+        if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= form["email"].value.length)
+        {
+            alert("Not a valid e-mail address");
+            return false;
+        }
+    }
+</code>
+        </pre>
+        <p>Here we are making sure that there has been some kind of input entered into each field. 
+            I am also enforcing a password length and performing a rudimentary email validation, 
+            to make sure that an "@" sign is included in the email field. There are many other 
+            functions you could add, such as validating password strength, checking to see if username
+            is already taken, etc.</p>
+        <p>This would also be a great time to make your css file "create_user_style.css". I can't 
+            discuss the scope of how to create a CSS style sheet here, but for beginners I recommend 
+            checking out the book "HTML & CSS: design and build websites" by Jon Duckett. You could 
+            also check out this<a href="http://learn.shayhowe.com/html-css/">website</a>for basic 
+            lessons on CSS and HTML. </p>
+        <h1>Adding user to the database.</h1>
+        <p>Here is where we finally get to bring in our trusty friend, PHPass while also (safely) 
+            connecting to the database. Create a php file (I called mine "create_user.php"). 
+            Make sure the name matches what you put in your forms action attribute.</p>
+        <p>For a stripped-down version of installing PHPass, go <a href="http://sunnyis.me/blog/secure-passwords/">here</a>.</p>
+        Be sure to download PHPass <a href="http://www.openwall.com/phpass/">here</a>, if you haven't already.
+        <pre><code class='php'>
+&lt;?php
+
+//you must include this file wherever you work with passwords
+require("PasswordHash.php");
+//the first argument, 8, is the algorithm used for password stretching
+//the second argument allows the program to use portable hashes
+$hasher = new PasswordHash(8, false);
+//retrieving password
+$password = $_POST["password"];
+//retrieving username
+$username = $_POST["username"];
+//retrieving e-mail
+$email = $_POST["email"];
+//keeping passwords to less than 72 characters helps to avoid denial-of-service attacks
+if (strlen($password) > 72) {
+    die("Password must be 72 characters or less");
+}
+//creating the hash variable which stores the hash
+$hash = $hasher->HashPassword($password);
+//if hash is created we connect to the database
+if (strlen($hash) >= 20) {
+    $con = mysqli_connect("myhost","myuser","mypassw","mydb");
+    if (mysqli_connect_errno()) {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    } else {
+//if connection is made, we insert the values(password is now hash) into the database
+        $result = mysqli_query($con, "INSERT INTO phpass (username, password, email) VALUES 
+        ('{$username}', '{$hash}', '{$email}')");
+        echo "&lt;p>User created.&lt;/p> &lt;a href='index.php'>Create another?&lt;/a>";
+    }
+} else {
+    echo "Something went wrong";
+}
+
+
+</code></pre>
+        <p></p>
+        
+        <h1> Verifying new user account in a database.</h1>
+        <p>Now check the database to see if an id has been assigned, username has been entered,
+        password has been hashed, and e-mail has been entered. You will know the password has been 
+        hashed if it has been turned into a long string of characters.  See the example below:</p>
+        <img src="images/hashindb.png" alt="hash">
+        
+       
+    </body>
+</html>
+test line
